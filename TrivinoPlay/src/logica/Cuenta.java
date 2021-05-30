@@ -51,9 +51,14 @@ public class Cuenta {
     public String getEmail(){
         return email;
     }
-    
+    public String getContrasena(){
+        return contrasena;
+    }
     public boolean getAdmin(){
         return admin;
+    }
+    public String getDireccionImagenPerfil(){
+        return direccionImagenPerfil;
     }
     
     public Image getImage(){

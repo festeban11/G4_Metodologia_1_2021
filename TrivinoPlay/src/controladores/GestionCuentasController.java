@@ -1,17 +1,28 @@
 
 package controladores;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import logica.Cuenta;
 
 /**
@@ -37,13 +48,36 @@ public class GestionCuentasController implements Initializable {
     private Button botonEliminarCuenta;
     @FXML
     private TableView<Cuenta> tablaCuentas;
+    @FXML
+    private TableColumn colNombreUsuario;
+    @FXML
+    private TableColumn colEmail;
+    @FXML
+    private TableColumn colContrasena;
+    @FXML
+    private TableColumn colImagen;
+    @FXML
+    private TableColumn colAdministrador;
+    
+    private ObservableList<Cuenta> cuentas;
+    
+    private Cuenta cuentaSeleccionada;
+    FXMLLoader loaderEmergente;
 
-    /**
-     * Initializes the controller class.
-     */
+   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        cuentas = FXCollections.observableArrayList();
+        this.tablaCuentas.setItems(cuentas);
+                
+        this.colContrasena.setCellValueFactory(new PropertyValueFactory("contrasena"));
+        this.colNombreUsuario.setCellValueFactory(new PropertyValueFactory("nombre"));
+        this.colEmail.setCellValueFactory(new PropertyValueFactory("email"));
+        
+        this.colAdministrador.setCellValueFactory(new PropertyValueFactory("admin"));
+        this.colImagen.setCellValueFactory(new PropertyValueFactory("direccionImagenPerfil"));
+        
+        tablaCuentas.refresh();
     }    
 
     @FXML
@@ -73,6 +107,42 @@ public class GestionCuentasController implements Initializable {
 
     @FXML
     private void agregarCuenta(ActionEvent event) {
+        try{
+            loaderEmergente = new FXMLLoader(getClass().getResource("../vistas/AgregarCuenta.fxml"));
+
+            Parent raiz = loaderEmergente.load();
+
+            AgregarCuentaController controlador = loaderEmergente.getController();
+            controlador.iniciarAtributos(cuentas);
+            
+            
+            //Stage stageContenedor = (Stage) this.botonAgregarCuenta.getScene().getWindow();
+            
+            
+            Scene escena = new Scene(raiz);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(true);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.setScene(escena);
+            
+            //stageContenedor.hide();
+            
+            stage.showAndWait();           
+            
+            //stageContenedor.show();
+            
+            
+            Cuenta cuentaAgregada = controlador.getCuentaAgregada();
+            if (cuentaAgregada!=null){
+                this.cuentas.add(cuentaAgregada);
+                this.tablaCuentas.refresh();
+                
+            }
+            
+            
+        }catch(IOException e){}
+        
     }
 
     @FXML
